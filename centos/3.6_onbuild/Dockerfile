@@ -1,4 +1,4 @@
-FROM cegekamon/python_base:centos7-3.6
+FROM cegekamon/python_base:centos-3.6-latest
 
 ARG REQ_FOLDER=.
 ENV REQ_FOLDER $REQ_FOLDER
