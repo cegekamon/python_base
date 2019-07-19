@@ -1,0 +1,1 @@
+FROM python_base:centos7-3.6
