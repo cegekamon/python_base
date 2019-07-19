@@ -1,4 +1,4 @@
-FROM centos:centos7.6.1810
+FROM centos:centos7.6.1810 AS build_
 
 # set up environment variables
 ENV PYTHON_VERSION=3.6 \
@@ -18,22 +18,21 @@ RUN yum update -y \
     && rm -rf /var/cache/yum
 
 ENV USER_ID 1000
-ENV VIRTUAL_ENV /opt/app_venv
+ENV VIRTUAL_ENV /opt/apps/app_venv
+ENV APP_ROOT /opt/apps/app_root
+ENV SCRIPTS_ROOT /opt/apps/scripts
 
 # create apps user
 USER root
-RUN useradd -u $USER_ID apps
-RUN usermod -aG wheel apps
+RUN mkdir /opt/apps
+RUN useradd -u $USER_ID apps --home /opt/apps
+
+COPY scripts $SCRIPTS_ROOT
+RUN chmod +x $SCRIPTS_ROOT/*.sh && chown apps:apps -R $SCRIPTS_ROOT
 
 # create folders for the app
-RUN mkdir /opt/app_root && chown apps:apps -R /opt/app_root
-RUN mkdir /opt/app_venv && chown apps:apps -R /opt/app_venv
-
-# install centos requirements
-ONBUILD ADD requirements/centos centos
-ONBUILD USER root
-ONBUILD RUN bash -c '[ -s centos ] && cat centos | xargs yum install -y || echo "File empty"'
-ONBUILD USER apps
+RUN mkdir $APP_ROOT && chown apps:apps -R $APP_ROOT
+RUN mkdir $VIRTUAL_ENV && chown apps:apps -R $VIRTUAL_ENV
 
 # operate as apps
 USER apps
@@ -41,9 +40,7 @@ USER apps
 # setup workspace
 RUN python3.6 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-WORKDIR /opt/app_root
+WORKDIR $APP_ROOT
 
 # pip install app requirements
 RUN pip install --upgrade pip
-ONBUILD ADD requirements/pip requirements.txt
-ONBUILD RUN pip install -r requirements.txt
