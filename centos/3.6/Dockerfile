@@ -26,6 +26,7 @@ ENV SCRIPTS_ROOT /opt/apps/scripts
 USER root
 RUN mkdir /opt/apps
 RUN useradd -u $USER_ID apps --home /opt/apps
+RUN chown apps:apps /opt/apps
 
 COPY scripts $SCRIPTS_ROOT
 RUN chmod +x $SCRIPTS_ROOT/*.sh && chown apps:apps -R $SCRIPTS_ROOT
