@@ -8,7 +8,17 @@ else
 echo -e "\c"
 fi
 
-cat "$@" | xargs yum install -y
-yum -y clean all --enablerepo='*'
-rm -rf /var/cache/yum
+for file in "$@"
+do
+    if [ -s  "$file" ]
+    then
+        cat "$file" | xargs yum install -y
+        yum -y clean all --enablerepo='*'
+        rm -rf /var/cache/yum
+    else
+         echo "$file is empty. Skip"
+    fi
+done
+
+
 

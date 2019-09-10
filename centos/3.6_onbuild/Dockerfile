@@ -12,3 +12,8 @@ ONBUILD USER apps
 ONBUILD ADD $REQ_FOLDER/requirements.txt .
 ONBUILD RUN /opt/apps/scripts/pip_install.sh requirements.txt
 
+ONBUILD USER root
+ONBUILD RUN chown -R apps:apps /opt/apps
+ONBUILD RUN chgrp -R 0 /opt/apps/ && chmod -R g+rwX /opt/apps/
+
+ONBUILD USER apps

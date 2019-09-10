@@ -45,3 +45,11 @@ WORKDIR $APP_ROOT
 
 # pip install app requirements
 RUN pip install --upgrade pip
+
+# allow all users to access the files in /opt/apps
+# necessary for OpenShift, as it runs with a random UID
+USER root
+RUN chown -R apps:apps /opt/apps
+RUN chgrp -R 0 /opt/apps/ && chmod -R g+rwX /opt/apps/
+
+USER apps

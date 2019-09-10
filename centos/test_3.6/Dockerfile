@@ -2,7 +2,7 @@ FROM cegekamon/python_base:centos7-3.6
 
 COPY yum_requirements.txt .
 USER root
-RUN cat system_requirements.txt | xargs yum install -y
+RUN cat yum_requirements.txt | xargs yum install -y
 USER apps
 
 COPY requirements.txt .
